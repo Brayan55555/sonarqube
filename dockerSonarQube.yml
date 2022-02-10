@@ -1,0 +1,69 @@
+version: '3.7'
+services:
+# jenkins: 
+#  image: jenkins/jenkins:latest
+#  privileged: true
+#  user: root
+#  ports: 
+#   - 8080:8080
+#   - 50000:50000
+#  container_name: jenkins
+#  volumes: 
+#   - ~/jenkins:/var/jenkins_home
+#   - /var/run/docker.sock:/var/run/docker.sock
+#   - /usr/local/bin/docker:/usr/local/bin/docker
+# portainer: 
+#  image: portainer/portainer-ce:latest
+#  container_name: portainer
+#  restart: unless-stopped
+#  security_opt: 
+#   - no-new-privileges:true
+#  volumes: 
+#   - /etc/localtime:/etc/localtime:ro
+#   - /var/run/docker.sock:/var/run/docker.sock:ro
+#   - ./portainer-data:/data
+#  ports: 
+#   - 9100:9100
+ sonarqube: 
+  image: sonarqube:8.2-community
+  depends_on:
+   - db
+  ports: 
+   - 9000:9000
+  networks: 
+   - sonarnet
+  environment: 
+   POSTGRES_USER: sonar
+   POSTGRES_PASSWORD: sonar
+  volumes:
+   - sonarqube_data:/opt/sonarqube/data
+   - sonarqube_extensions:/opt/sonarqube/extensions
+   - sonarqube_logs:/opt/sonarqube/logs
+   - sonarqube_temp:/opt/sonarqube/temp
+ db:
+  image: postgres
+  networks:
+   - sonarnet
+  environment:
+   POSTGRES_USER: sonar
+   POSTGRES_PASSWORD: sonar
+  volumes:
+   - postgresql:/var/lib/postgresql
+   - postgresql_data:/var/lib/postgresql/data
+# nexus:
+#  image: sonatype/nexus3:latest
+#  volumes: 
+#   - nexus-data:/sonatype-work
+#  ports:
+#   - 8081:8081
+networks: 
+ sonarnet: 
+  driver: bridge
+volumes: 
+ sonarqube_data: 
+ sonarqube_extensions: 
+ sonarqube_logs: 
+ sonarqube_temp: 
+ postgresql: 
+ postgresql_data:
+# nexus-data: {}
